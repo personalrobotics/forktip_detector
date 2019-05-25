@@ -16,7 +16,7 @@ FORK_V_OFFSET = 17
 class tip_detector:
 
   def __init__(self):
-  	uv_topic = rospy.get_param("fork_uv_topic", "fork_uv")
+    uv_topic = rospy.get_param("fork_uv_topic", "fork_uv")
     self.uv_pub = rospy.Publisher(uv_topic, Pose2D)
 
     self.bridge = CvBridge()
@@ -26,7 +26,7 @@ class tip_detector:
     self.template = cv2.imread('template_mid.png', 0)
 
   def callback(self,data):
-  	# Convert to cv2 color image
+    # Convert to cv2 color image
     try:
       img = self.bridge.imgmsg_to_cv2(data, "mono8")
     except CvBridgeError as e:
@@ -34,29 +34,29 @@ class tip_detector:
 
     # Pre-Process Image
     y = 200
-	x = 300
-	img = img[y:y+280, x:x+250]
-	img = cv2.convertScaleAbs(img, alpha=1.7, beta=-1.4)
-	blur = cv2.GaussianBlur(img, (7, 7), 0)
-	blur_edges = cv2.Canny(blur, 0, 140)
+    x = 300
+    img = img[y:y+280, x:x+250]
+    img = cv2.convertScaleAbs(img, alpha=1.7, beta=-1.4)
+    blur = cv2.GaussianBlur(img, (7, 7), 0)
+    blur_edges = cv2.Canny(blur, 0, 140)
 
-	# Template Matching
-	res = cv2.matchTemplate(blur_edges, self.template, cv2.TM_CCORR)
-	cv2.normalize(res, res, 0, 1, cv2.NORM_MINMAX, -1);
+    # Template Matching
+    res = cv2.matchTemplate(blur_edges, self.template, cv2.TM_CCORR)
+    cv2.normalize(res, res, 0, 1, cv2.NORM_MINMAX, -1);
 
-	_, max_val, _, max_loc = cv2.minMaxLoc(res)
+    _, max_val, _, max_loc = cv2.minMaxLoc(res)
 
-	u = max_loc[0] + FORK_U_OFFSET
-	v = max_loc[1] + FORK_V_OFFSET
+    u = max_loc[0] + FORK_U_OFFSET
+    v = max_loc[1] + FORK_V_OFFSET
 
-	print("Found fork at: (%d, %d)" % (u, v))
-	print("Strength: " + str(max_val))
+    print("Found fork at: (%d, %d)" % (u, v))
+    print("Strength: " + str(max_val))
 
-	# Publish Pose Message
-	pose = Pose2D()
-	pose.x = u
-	pose.y = v
-	pose.theta = max_val
+    # Publish Pose Message
+    pose = Pose2D()
+    pose.x = u
+    pose.y = v
+    pose.theta = max_val
     self.uv_pub.publish(pose)
 
 def main(args):
