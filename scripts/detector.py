@@ -10,7 +10,13 @@ from sensor_msgs.msg import Image
 from geometry_msgs.msg import Pose2D
 from cv_bridge import CvBridge, CvBridgeError
 
-FORK_U_OFFSET = 36
+from matplotlib import pyplot as pyplot
+import numpy
+
+# FORK_U_OFFSET = 36
+# FORK_V_OFFSET = 17
+
+FORK_U_OFFSET = 39
 FORK_V_OFFSET = 17
 
 class tip_detector:
@@ -58,6 +64,7 @@ class tip_detector:
     pose.y = v + y
     pose.theta = max_val
     self.uv_pub.publish(pose)
+
 
 def main(args):
   td = tip_detector()
