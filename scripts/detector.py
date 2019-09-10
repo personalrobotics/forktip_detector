@@ -10,14 +10,12 @@ from sensor_msgs.msg import Image
 from geometry_msgs.msg import Pose2D
 from cv_bridge import CvBridge, CvBridgeError
 
-from matplotlib import pyplot as pyplot
-import numpy
-
-# FORK_U_OFFSET = 36
-# FORK_V_OFFSET = 17
-
+# Tunable Parameters:
 FORK_U_OFFSET = 39
 FORK_V_OFFSET = 17
+# This is the offset between the center of the matched template
+#   and the actual tip of the fork. Draw the published
+#   message on the camera image to check for accuracy.
 
 class tip_detector:
 
